@@ -1,18 +1,25 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Temporary storage
 let users = [];
 
-app.get("/", (req, res) => {
+// API route
+app.get("/api", (req, res) => {
   res.send("✅ Signup API is running successfully!");
 });
 
-app.post("/signup", (req, res) => {
+app.post("/api/signup", (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -28,5 +35,13 @@ app.post("/signup", (req, res) => {
   res.json({ message: "Signup successful!", users });
 });
 
+// Serve React frontend (after build)
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+});
+
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
