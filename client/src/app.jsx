@@ -9,7 +9,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/signup", form);
+      const res = await axios.post("/api/signup", form);
       setMessage(res.data.message);
     } catch (err) {
       setMessage(err.response?.data?.message || "Error occurred");
